@@ -77,6 +77,7 @@ class LegalBridgeDQL():
             policy_actions_slots = ['h1', 'h2', 'h3']
 
             temp_block_availability_list = block_availability_list.copy()
+            prev_action_str = ''
             while (not terminated and not truncated):
 
                 with torch.no_grad():
@@ -87,7 +88,6 @@ class LegalBridgeDQL():
                     # print('Action: ', action_string)
                     action_block_number = self.get_action_block_number(action_number, block_availability_list)
                     if action_block_number == 'b0':
-
                         step_count += 1
                         break
 
@@ -95,16 +95,21 @@ class LegalBridgeDQL():
                     (policy_actions_slots[0], action_block_number))
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
                 print(policy_actions_slots[0], action_block_number, action_string)
+                if prev_action_str == action_string:
+                    break
+
                 if terminated:
                     done_count += 1
                     break
 
                 if info_dict['success_step'] == 1:
+                    prev_action_str = ''
                     del policy_actions_slots[0]
                     index_to_remove = temp_block_availability_list[action_string].index(action_block_number)
                     del block_availability_list[action_string][index_to_remove]
                     temp_block_availability_list = block_availability_list.copy()
                 else:
+                    prev_action_str = action_string
                     temp_block_availability_list[action_string] = []
                     new_state = self.update_input_tensor_on_block_availability(new_state, temp_block_availability_list)
                 input_tensor = new_state
@@ -228,14 +233,19 @@ class LegalBridgeDQL():
 
         # The remaining numbers constitute the test set
         test_set = numbers
-
+        print(test_set)
         return train_set, test_set
 
 if __name__ == '__main__':
     bridge_world= LegalBridgeDQL()
-    train_set, test_set = bridge_world.split_train_test(total_samples=612)
+    # train_set, test_set = bridge_world.split_train_test(total_samples=612)
+    test_set = [2, 12, 14, 18, 22, 35, 49, 55, 61, 62, 66, 68, 71, 73, 74, 80, 85, 90, 94, 96, 98, 99, 104, 107, 114, 119, 120, 122, 125, 126,
+                134, 135, 136, 141, 146, 155, 156, 158, 164, 166, 169, 172, 179, 181, 184, 188, 192, 197, 199, 218, 221, 226, 230, 242, 246, 257,
+                267, 268, 270, 272, 275, 287, 296, 305, 307, 310, 313, 317, 318, 330, 335, 342, 347, 351, 355, 363, 371, 372, 375, 379, 383, 392, 395, 396,
+                397, 399, 406, 411, 416, 421, 442, 456, 460, 463, 464, 468, 469, 475, 476, 478, 479, 491, 495, 497, 504, 506, 516, 531, 535, 542, 547, 557, 558,
+                564, 574, 579, 580, 586, 589, 591, 593, 605, 611]
     len_test_set = len(test_set)
-    len_train_set = len(train_set)
+    # len_train_set = len(train_set)
     done_count = bridge_world.test(len_test_set, test_set)
     accuracy = done_count / len_test_set
     print(accuracy)
