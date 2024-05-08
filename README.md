@@ -54,11 +54,17 @@ Make sure  latest version `pyreason==2.0.1` has been installed using the instruc
 
 Clone the repository, and install:
 ```bash
-git clone [https://github.com/jaikrishnap98/pyreason-gym-bridge-world](https://github.com/jaikrishnap98/pyreason-gym-bridge-world.git)
+git clone https://github.com/jaikrishnap98/pyreason-gym-bridge-world
 ```
+## Usage
+To run the environment and get a feel for things you can run the [`test_legal_bridge.py`](./test_legal_bridge.py) file which will perform actions in the bridge world. 
+You can change the actions in the script according to your requirement. 
 
+If you want to use PyReason as a simulator, set macro `PYREASON_SIMULATOR`= True otherwise set it to False and provide your own implementation in the [`other_simulator.py`](./pyreason_gym/simulator_other/other_simulator.py)
+```bash
+python test_legal_bridge.py
 
-This Block World scenario needs a graph in GraphML format to run. A graph file has **already been generated** in the [graphs folder](pyreason_gym/pyreason_bridge_world/graph/bridge_world_graph.graphml/). 
+This Bridge World scenario needs a graph in GraphML format to run. A graph file has **already been generated** in the [graphs folder](pyreason_gym/pyreason_bridge_world/graph/bridge_world_graph.graphml/). 
 
 This is an OpenAI Gym custom environment. More on OpenAI Gym:
 
