@@ -81,10 +81,10 @@ for block, list_properties in initial_facts.items():
 # Policy test: Picked blocks
 # policy_actions_pick = ['red-square', 'red-square', 'red-square', 'blue-rectangle', 'green-rectangle', 'red-curve', 'green-curve', 'green-square', 'red-curve']
 # policy_actions_pick = ['red-vertical', 'red-vertical', 'green-horizontal']
-policy_actions_pick = ['green-vertical', 'red-vertical', 'blue-horizontal']
+policy_actions_pick = ['green-vertical', 'red-vertical', 'blue-horizontal', 'blue-vertical', 'red-horizontal']
 # Policy test: slots assigned, h1-h7 are slots for house and h0 is a trash!
 # policy_actions_slots = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h0', 'h7', 'h7']
-policy_actions_slots = ['h1', 'h2', 'h3']
+policy_actions_slots = ['h1', 'h2', 'h3', 'h3', 'h3']
 
 
 

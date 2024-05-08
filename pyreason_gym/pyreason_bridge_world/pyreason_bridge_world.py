@@ -24,7 +24,7 @@ class PyReasonBridgeWorld:
         pr.settings.canonical = True
         pr.settings.inconsistency_check = False
         pr.settings.static_graph_facts = False
-        pr.settings.save_graph_attributes_to_trace = True
+        pr.settings.save_graph_attributes_to_trace = False
         pr.settings.store_interpretation_changes = True
         current_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -76,7 +76,7 @@ class PyReasonBridgeWorld:
         node_facts.append(fact_picked_on)
         node_facts.append(fact_picked_off)
         self.interpretation = pr.reason(again=True, node_facts=node_facts, edge_facts=edge_facts)
-        pr.save_rule_trace(self.interpretation)
+        # pr.save_rule_trace(self.interpretation)
         # self.interpretation = pr.reason(again=True, edge_facts=edge_facts)
         # pr.save_rule_trace(self.interpretation)
         self.next_time = self.interpretation.time + 1

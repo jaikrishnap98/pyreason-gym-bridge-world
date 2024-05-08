@@ -70,23 +70,33 @@ class BridgeWorldEnv(gym.Env):
         :return: calculated reward
         '''
         #
-        illegal_slot = -2000
-        legal_slot = +500
-        done = 10000
+        illegal_slot = -2
+        legal_slot = 1
+        done = 10
         incomplete = 0
+        impossible = 0
 
 
         len_slots = len(observation['slots'].keys())
         final_reward = self.prev_reward
         previous_action_counter = self.legal_action_counter
-        total_blocks = 10
-        total_slots = 7
-        number_of_left_blocks = total_blocks - len(observation['costs'].keys())
+        total_blocks = 5
+        total_slots = 3
+        number_of_left_blocks = 0
+        for k, v in observation['blocks_available'].items():
+            number_of_left_blocks += v
+
+        # number_of_left_blocks = total_blocks - len(observation['costs'].keys())
         number_of_left_slots = total_slots - len(observation['slots'].keys())
+        flag_illegal = False
+        flag_legal = False
+        flag_incomplete = False
+        flag_complete = False
 
         # Illegal slot
         # print(observation)
         if len_slots == previous_action_counter:
+            flag_illegal = True
             # extra_blocks = set(observation['costs'].keys()) - set(observation['slots'].values())
             final_reward += illegal_slot
             # for extra_block in extra_blocks:
@@ -97,20 +107,33 @@ class BridgeWorldEnv(gym.Env):
                 # final_reward = final_reward - cost / 2
         # Legal slot
         elif len_slots > previous_action_counter:
+            flag_legal = True
             final_reward += legal_slot
 
         # Incomplete
         if number_of_left_blocks < number_of_left_slots:
-            final_reward += incomplete
+            flag_impossible = True
+            final_reward += impossible
 
-        if len(observation['slots']) == 7:
+        if len(observation['slots']) == 3:
+            flag_complete = True
             final_reward += done
+        else:
+            flag_incomplete = True
 
 
         # final_reward += self.total_illegal_reward
         self.legal_action_counter = len_slots
         self.prev_reward = final_reward
-        return final_reward
+
+        if flag_illegal and flag_incomplete:
+            return illegal_slot
+        if flag_legal and flag_incomplete:
+            return legal_slot
+        if flag_legal and flag_complete:
+            return legal_slot + done
+
+        # return final_reward
 
     def reset(self, seed=None, options=None):
         """Resets the environment to the initial conditions
@@ -154,8 +177,8 @@ class BridgeWorldEnv(gym.Env):
         # End of game
         done = self.is_done(observation)
 
-        if self.count > 100:
-            rew = rew-2000
+        if self.count > 15 and not done:
+            rew = -10
             truncate = True
         else:
             truncate = False

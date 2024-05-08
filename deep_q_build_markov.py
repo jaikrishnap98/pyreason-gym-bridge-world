@@ -16,10 +16,12 @@ class DQN(nn.Module):
         super().__init__()
 
         self.fc1 = nn.Linear(in_states, h1_nodes)
-        self.out = nn.Linear(h1_nodes, out_actions)
+        self.fc2 = nn.Linear(h1_nodes, h1_nodes*2)
+        self.out = nn.Linear(h1_nodes*2, out_actions)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
+        x = F.tanh(self.fc1(x))
+        x = F.tanh(self.fc2(x))
         x = self.out(x)
         return x
 
@@ -38,17 +40,17 @@ class ReplayMemory():
 
 class LegalBridgeDQL():
     # Hyperparameters (adjustable)
-    learning_rate_a = 0.001  # learning rate (alpha)
+    learning_rate_a = 0.01  # learning rate (alpha)
     discount_factor_g = 0.99  # discount rate (gamma)
     network_sync_rate = 5  # number of steps the agent takes before syncing the policy and target network
     replay_memory_size = 1000  # size of replay memory
-    mini_batch_size = 16  # size of the training data set sampled from the replay memory
+    mini_batch_size = 32  # size of the training data set sampled from the replay memory
 
     # Neural Network
     loss_fn = nn.MSELoss()  # NN Loss function. MSE=Mean Squared Error can be swapped to something else.
     optimizer = None  # NN Optimizer. Initialize later.
 
-    ACTIONS = ['red-vertical', 'red-horizontal','green-vertical', 'green-horizontal','blue-vertical', 'blue-horizontal']
+    ACTIONS = ['red-vertical', 'red-horizontal','green-vertical', 'green-horizontal', 'blue-vertical', 'blue-horizontal']
 
     def train(self, episodes, train_set, test_set, render=False):
         env = gym.make('PyReasonBridgeWorld-v0')
@@ -64,7 +66,7 @@ class LegalBridgeDQL():
         target_dqn.load_state_dict(policy_dqn.state_dict())
 
         # print('Policy (random, before training):')
-        # self.print_dqn(policy_dqn)
+        # self.pri
 
         self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr = self.learning_rate_a)
 
@@ -75,14 +77,16 @@ class LegalBridgeDQL():
         step_count = 0
 
         for i in range(episodes):
-            mode_val = len_train_set/10
-            if i%mode_val==0:
-                len_test_set = len(test_set)
-                done_count = blocks_world.test(len_test_set, test_set)
-                accuracy = done_count / len_test_set
-                print(f'Accuracy: {accuracy*100:.2f}%')
+            print(f'Episode:{train_set[i]}')
+            # mode_val = int(np.floor(len_train_set/10))
+            # if i%mode_val==0:
+            #     len_test_set = len(test_set)
+            #     done_count = bridge_world.test(len_test_set, test_set)
+            #     accuracy = done_count / len_test_set
+            #     print(f'Accuracy: {accuracy*100:.2f}%')
             state = env.reset()[0]
-            real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(csv_file=f'input_data/{train_set[i]}.csv')
+            real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(csv_file=f'bridgeworld_data/{train_set[i]}.csv')
+            # print(train_set[i])
             state_dict = env.initialize_facts(real_to_node_initial_facts)
             # print(state_dict)
             input_tensor = self.get_input_tensor_from_state_dict(state_dict)
@@ -96,37 +100,61 @@ class LegalBridgeDQL():
             terminated = False
             truncated = False
             policy_actions_slots = ['h1', 'h2', 'h3']
-            reward = 0
+            episode_reward = 0
             # temp_available_blocks = available_blocks.copy()
             temp_block_availability_list = block_availability_list.copy()
+            print(f'Starting episode reward: {episode_reward}')
             while(not terminated and not truncated):
+                # print(temp_block_availability_list)
                 # print(block_availability_list)
                 # print(available_blocks)
-                if random.random() < epsilon:
+                # print('Epsilon', epsilon)
+                r_num = random.random()
+                # print('Random num:', r_num)
+                # print(input_tensor)
+                if r_num < epsilon:
+
                     keys_list = [key for key in temp_block_availability_list.keys() if temp_block_availability_list[key]!=[]]
-                    action_string = random.choice(keys_list)
-                    # index_to_remove = temp_available_blocks.index(action_string)
-                    action_number = self.get_action_number(action_string)
-                    action_block_number = self.get_action_block_number(action_number, temp_block_availability_list)
-                    # print(action_string, action_block_number)
+                    if len(keys_list) > 0:
+                        # print('Randomly picking something out of : ')
+                        # print(keys_list)
+                        action_string = random.choice(keys_list)
+                        # print('Picked action: ', action_string)
+                        # index_to_remove = temp_available_blocks.index(action_string)
+                        action_number = self.get_action_number(action_string)
+                        action_block_number = self.get_action_block_number(action_number, temp_block_availability_list)
+                        # print(action_string, action_number)
+                    else:
+                        print('keys_list is empty----------------------------------------------------------------\n')
+                        print(f'Before finding empty option list, episode reward: {episode_reward}')
+                        episode_reward -= 10
+                        print(f'After finding empty option list, episode reward: {episode_reward}')
+
+                        break
+
 
 
                 else:
                     with torch.no_grad():
+                        # print('Picked by RL')
                         action_number = policy_dqn(input_tensor).argmax().item()
                         action_string = self.get_action_string(action_number)
                         # if temp_block_availability_list[action_string]!=[]:
                         #     index_to_remove = temp_available_blocks.index(action_string)
                         action_block_number = self.get_action_block_number(action_number, block_availability_list)
+                        # print('Action num:', action_number)
                         if action_block_number == 'b0':
-                            reward = reward - 50000
+                            reward = -5
+                            episode_reward += reward
+                            print(f'After RL agent selects unknown block, epsiode reward: {episode_reward}')
                             memory.append((input_tensor, action_number, input_tensor, reward, terminated))
                             step_count += 1
-                            continue
+                            break
                         # print('=======================================================================================')
 
                 # print(policy_actions_slots[0], action_block_number)
                 new_state_dict, reward, terminated, truncated, info_dict = env.step((policy_actions_slots[0],action_block_number))
+
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
 
@@ -157,12 +185,14 @@ class LegalBridgeDQL():
 
 
                 memory.append((input_tensor, action_number, new_state, reward, terminated))
+                episode_reward += reward
+                print(f'After adding illegal/legal reward: {episode_reward}')
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
                 input_tensor = new_state
 
                 step_count+=1
-
-            rewards_per_episode[i] = reward
+            print(episode_reward)
+            rewards_per_episode[i] = episode_reward
 
             if len(memory) > self.mini_batch_size:
                 mini_batch = memory.sample(self.mini_batch_size)
@@ -191,7 +221,7 @@ class LegalBridgeDQL():
             for x in range(episodes):
                 sum_rewards[x] = np.sum(rewards_per_episode[max(0, x - 100):(x + 1)])
             plt.subplot(121)  # plot on a 1 row x 2 col grid, at cell 1
-            plt.plot(sum_rewards)
+            plt.plot(rewards_per_episode)
 
             # Plot epsilon decay (Y-axis) vs episodes (X-axis)
             plt.subplot(122)  # plot on a 1 row x 2 col grid, at cell 2
@@ -218,9 +248,12 @@ class LegalBridgeDQL():
         done_count = 0
         step_count = 0
         for i in range(episodes):
+            print('===================================')
+            print(f'Episode {test_set[i]}')
             state = env.reset()[0]
             real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(
-                csv_file=f'input_data/{test_set[i]}.csv')
+                csv_file=f'bridgeworld_data/{test_set[i]}.csv')
+            # print(test_set[i])
             state_dict = env.initialize_facts(real_to_node_initial_facts)
             # print(state_dict)
             input_tensor = self.get_input_tensor_from_state_dict(state_dict)
@@ -237,10 +270,14 @@ class LegalBridgeDQL():
             while (not terminated and not truncated):
 
                 with torch.no_grad():
+                    # print('Inpu tensor: ',input_tensor)
+
                     action_number = policy_dqn(input_tensor).argmax().item()
                     action_string = self.get_action_string(action_number)
+                    # print('Action: ', action_string)
                     action_block_number = self.get_action_block_number(action_number, block_availability_list)
                     if action_block_number == 'b0':
+
                         step_count += 1
                         break
                     # print(action_block_number)
@@ -250,9 +287,11 @@ class LegalBridgeDQL():
                 new_state_dict, reward, terminated, truncated, info_dict = env.step(
                     (policy_actions_slots[0], action_block_number))
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
+                print(policy_actions_slots[0], action_block_number, action_string)
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
                 if terminated:
                     done_count += 1
+                    break
 
                 if info_dict['success_step'] == 1:
                     del policy_actions_slots[0]
@@ -364,12 +403,22 @@ class LegalBridgeDQL():
     def get_input_tensor_from_state_dict(self, state_dict):
         blocks_available = state_dict.get('blocks_available', {})
         slots_available = state_dict.get('slots_available', {})
+        # h1_entry = 0
+        # h2_entry = 0
+        # h3_entry = 0
+        # if slots_available['h1'] != 0:
+        #     h1_entry = 1
+        # if slots_available['h2'] != 0:
+        #     h2_entry = 1
+        # if slots_available['h3'] != 0:
+        #     h3_entry = 1
 
+        # Old approacch
         # Extracting values in a specific order
         tensor_values = [
-            slots_available.get('h1', 0),
-            slots_available.get('h2', 0),
-            slots_available.get('h3', 0),
+            slots_available.get('h1', 0)-1,
+            slots_available.get('h2', 0)-1,
+            slots_available.get('h3', 0)-1,
             blocks_available.get('red-vertical', 0),
             blocks_available.get('red-horizontal', 0),
             blocks_available.get('green-vertical', 0),
@@ -378,6 +427,19 @@ class LegalBridgeDQL():
             blocks_available.get('blue-horizontal', 0)
 
         ]
+        #New approach
+        # tensor_values = [
+        #     h1_entry,
+        #     h2_entry,
+        #     h3_entry,
+        #     blocks_available.get('red-vertical', 0),
+        #     blocks_available.get('red-horizontal', 0),
+        #     blocks_available.get('green-vertical', 0),
+        #     blocks_available.get('green-horizontal', 0),
+        #     blocks_available.get('blue-vertical', 0),
+        #     blocks_available.get('blue-horizontal', 0)
+        #
+        # ]
         tensor_values = torch.Tensor(tensor_values)
         return tensor_values
     def combine_values(self, dict1):
@@ -402,7 +464,7 @@ class LegalBridgeDQL():
         return real_to_node_initial_facts, initial_facts
 
 
-    def split_train_test(self, total_samples = 1000):
+    def split_train_test(self, total_samples = 612):
 
 
         # Define the total number of samples
@@ -420,6 +482,7 @@ class LegalBridgeDQL():
         numbers = list(range(1, total_samples + 1))
 
         # Randomly select numbers for the train set
+        random.seed(1)
         train_set = random.sample(numbers, num_train_samples)
 
         # Remove selected numbers from the list to ensure no overlap
@@ -471,14 +534,24 @@ class LegalBridgeDQL():
 
 
 if __name__ == '__main__':
-    blocks_world= LegalBridgeDQL()
-    train_set, test_set = blocks_world.split_train_test(total_samples=10)
-    # train_set = [55, 56,57,58,59,60,61,62,63]
-    # test_set = [55, 56,57,58]
+    bridge_world= LegalBridgeDQL()
+    train_set, test_set = bridge_world.split_train_test(total_samples=612)
+    # train_set.extend(train_set)
+    # train_set.extend(train_set)
+    # random.shuffle(train_set)
+    # train_set = [126 for i in range(100)]
+    # train_set = [126, 127]
+    # test_set = train_set
+    # train_set = [1 for i in range(100)]
+    # test_set = [1, 2]
+    # train_set = [i for i in range(1,613)]
+    # test_set = train_set.copy()
+    # train_set.extend(train_set)
     len_test_set = len(test_set)
     len_train_set = len(train_set)
-    # print(len_test_set)
-    blocks_world.train(len_train_set, train_set, test_set)
-    done_count = blocks_world.test(len_test_set, test_set)
+    print(len_train_set)
+    print(len_test_set)
+    # bridge_world.train(len_train_set, train_set, test_set)
+    done_count = bridge_world.test(len_test_set, test_set)
     accuracy = done_count / len_test_set
     print(accuracy)
