@@ -25,32 +25,27 @@ class DQN(nn.Module):
         x = self.out(x)
         return x
 
-class ReplayMemory():
-    def __init__(self, maxlen):
-        self.memory = deque([], maxlen=maxlen)
-
-    def append(self, transition):
-        self.memory.append(transition)
-
-    def sample(self, sample_size):
-        return random.sample(self.memory, sample_size)
-
-    def __len__(self):
-        return len(self.memory)
 
 class LegalBridgeDQL():
 
+    # 6 types of blocks that can be present in environemnt
     ACTIONS = ['red-vertical', 'red-horizontal','green-vertical', 'green-horizontal', 'blue-vertical', 'blue-horizontal']
 
     def test(self, episodes, test_set):
         #
 
         env = gym.make('PyReasonBridgeWorld-v0')
+
+        #Input states (slots: h1,h2.h3, available_number_of_blocks: 'red-vertical', 'red-horizontal','green-vertical', 'green-horizontal', 'blue-vertical', 'blue-horizontal')
         num_states = 9
+
+        # Blcoks that agent chooses from: 'red-vertical', 'red-horizontal','green-vertical', 'green-horizontal', 'blue-vertical', 'blue-horizontal'
         num_actions = 6
 
         # Load learned policy
         policy_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
+
+        #Loading model
         policy_dqn.load_state_dict(torch.load("bridge_world_dql.pt"))
         policy_dqn.eval()    # switch model to evaluation mode
 
@@ -61,16 +56,17 @@ class LegalBridgeDQL():
         for i in range(episodes):
             print('===================================')
             print(f'For {test_set[i]}.csv')
+
+            #Initialize facts/ environment/ availabel blocks in env
             state = env.reset()[0]
             real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(
                 csv_file=f'bridgeworld_data/{test_set[i]}.csv')
-            # print(test_set[i])
             state_dict = env.initialize_facts(real_to_node_initial_facts)
-            # print(state_dict)
+
+            # Making input ready to give it to a model as tensor
             input_tensor = self.get_input_tensor_from_state_dict(state_dict)
-            # print(input_tensor)
+
             block_availability_list = self.get_block_availability_list(real_initial_facts).copy()
-            # print(block_availability_list)
 
             terminated = False
             truncated = False
@@ -81,23 +77,30 @@ class LegalBridgeDQL():
             while (not terminated and not truncated):
 
                 with torch.no_grad():
-                    # print('Inpu tensor: ',input_tensor)
 
+                    # choosing the action/block to pick for particular slot one by one. i.e. h1 -> h2 -> h3
                     action_number = policy_dqn(input_tensor).argmax().item()
                     action_string = self.get_action_string(action_number)
-                    # print('Action: ', action_string)
                     action_block_number = self.get_action_block_number(action_number, block_availability_list)
+
+                    # If agent picks block that is not available in envirpnment. break !
                     if action_block_number == 'b0':
                         step_count += 1
                         break
 
+                # give slot, block number to gym
                 new_state_dict, reward, terminated, truncated, info_dict = env.step(
                     (policy_actions_slots[0], action_block_number))
+
+                # convert new state from gym and convert it to pytorch tensor based on that for next timestep
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
+
+                # Printing Slot, Block number, Type of block eg: h1,b3,red-vertical
                 print(policy_actions_slots[0], action_block_number, action_string)
                 if prev_action_str == action_string:
                     break
 
+                # Using it to determine number of times agent completed the legal bridge
                 if terminated:
                     done_count += 1
                     break
@@ -184,11 +187,7 @@ class LegalBridgeDQL():
 
         tensor_values = torch.Tensor(tensor_values)
         return tensor_values
-    def combine_values(self, dict1):
-        combined_list = []
-        for key, value in dict1.items():
-            combined_list.append('-'.join(value[:2]))  # Joining first two elements with a hyphen
-        return combined_list
+
     def get_initial_blocks_dict(self, csv_file):
         initial_facts = {}
         with open(csv_file, 'r') as file:
