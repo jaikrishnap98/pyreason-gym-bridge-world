@@ -54,7 +54,7 @@ Make sure  latest version `pyreason==2.0.1` has been installed using the instruc
 
 Clone the repository, and install:
 ```bash
-git clone https://github.com/jaikrishnap98/pyreason-gym-bridge-world
+git clone [https://github.com/jaikrishnap98/pyreason-gym-bridge-world](https://github.com/jaikrishnap98/pyreason-gym-bridge-world.git)
 ```
 
 
