@@ -1,0 +1,654 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="loc" for="node" attr.name="loc" attr.type="string" />
+  <key id="uid" for="node" attr.name="uid" attr.type="long" />
+  <key id="type" for="node" attr.name="type" attr.type="string" />
+  <key id="assigned" for="node" attr.name="assigned" attr.type="string" />
+  <key id="value" for="node" attr.name="value" attr.type="string" />
+  <key id="adjacent" for="edge" attr.name="adjacent" attr.type="string" />
+  <key id="meta" for="edge" attr.name="meta" attr.type="string" />
+  <key id="right" for="edge" attr.name="right" attr.type="string" />
+  <key id="left" for="edge" attr.name="left" attr.type="string" />
+  <key id="up" for="edge" attr.name="up" attr.type="string" />
+  <key id="down" for="edge" attr.name="down" attr.type="string" />
+  <key id="picked" for="node" attr.name="picked" attr.type="string" />
+  <key id="legalAdjacent" for="edge" attr.name="legalAdjacent" attr.type="string" />
+  <key id="allowedType" for="edge" attr.name="allowedType" attr.type="string" />
+  <key id="requiredShape" for="edge" attr.name="requiredShape" attr.type="string" />
+  <key id="color" for="edge" attr.name="color" attr.type="string" />
+  <key id="shape" for="edge" attr.name="shape" attr.type="string" />
+  <key id="cost" for="edge" attr.name="cost" attr.type="string" />
+  <key id="pickUpCost" for="edge" attr.name="pickUpCost" attr.type="string" />
+  <key id="atSlot" for="edge" attr.name="atSlot" attr.type="string" />
+  <key id="noTouchRight" for="edge" attr.name="noTouchRight" attr.type="string" />
+  <key id="noTouchLeft" for="edge" attr.name="noTouchLeft" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="h1">
+      <data key="uid">3</data>
+      <data key="loc">pillar-left</data>
+      <data key="type">slot</data>
+      <data key="assigned">0,0</data>
+    </node>
+    <node id="h2">
+      <data key="uid">4</data>
+      <data key="loc">pillar-right</data>
+      <data key="type">slot</data>
+      <data key="assigned">0,0</data>
+    </node>
+    <node id="h3">
+    <data key="uid">5</data>
+      <data key="loc">bridge-top</data>
+      <data key="type">slot</data>
+      <data key="assigned">0,0</data>
+    </node>
+
+    <node id="b0">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b1">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b2">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b3">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b4">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b5">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b6">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b7">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b8">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b9">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="b10">
+      <data key="type">block</data>
+      <data key="assigned">0,0</data>
+      <data key="picked">0,0</data>
+    </node>
+    <node id="c1">
+      <data key="type">color</data>
+      <data key="value">red</data>
+    </node>
+    <node id="c2">
+      <data key="type">color</data>
+      <data key="value">green</data>
+    </node>
+    <node id="c3">
+      <data key="type">color</data>
+      <data key="value">blue</data>
+    </node>
+
+
+    <node id="s1">
+      <data key="type">shape</data>
+      <data key="value">vertical</data>
+    </node>
+    <node id="s2">
+      <data key="type">shape</data>
+      <data key="value">horizontal</data>
+    </node>
+
+
+    <node id="2">
+      <data key="cost">1,1</data>
+      <data key="value">2</data>
+    </node>
+    <node id="4">
+      <data key="cost">1,1</data>
+      <data key="value">4</data>
+    </node>
+    <node id="6">
+      <data key="cost">1,1</data>
+      <data key="value">6</data>
+    </node>
+
+
+    <edge source="h1" target="h3">
+      <data key="adjacent">1,1</data>
+      <data key="meta">static</data>
+    </edge>
+    <edge source="h3" target="h1">
+      <data key="adjacent">1,1</data>
+      <data key="meta">static</data>
+    </edge>
+    <edge source="h2" target="h3">
+      <data key="adjacent">1,1</data>
+      <data key="meta">static</data>
+    </edge>
+    <edge source="h3" target="h2">
+      <data key="adjacent">1,1</data>
+      <data key="meta">static</data>
+    </edge>
+
+    <edge source="h1" target="h2">
+      <data key="noTouchRight">1,1</data>
+      <data key="meta">static</data>
+    </edge>
+    <edge source="h2" target="h1">
+      <data key="noTouchLeft">1,1</data>
+      <data key="meta">static</data>
+    </edge>
+
+    <edge source="c1" target="c1">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c1" target="c2">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c1" target="c3">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c2" target="c1">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c2" target="c2">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c2" target="c3">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c3" target="c1">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c3" target="c2">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+    <edge source="c3" target="c3">
+      <data key="legalAdjacent">1,1</data>
+    </edge>
+
+    <edge source="s1" target="c1">
+      <data key="allowedType">1,1</data>
+    </edge>
+    <edge source="s1" target="c2">
+      <data key="allowedType">1,1</data>
+    </edge>
+    <edge source="s1" target="c3">
+      <data key="allowedType">1,1</data>
+    </edge>
+    <edge source="s2" target="c1">
+      <data key="allowedType">0,0</data>
+    </edge>
+    <edge source="s2" target="c2">
+      <data key="allowedType">1,1</data>
+    </edge>
+    <edge source="s2" target="c3">
+      <data key="allowedType">1,1</data>
+    </edge>
+
+
+    <edge source="h1" target="s1">
+      <data key="requiredShape">1,1</data>
+    </edge>
+    <edge source="h2" target="s1">
+      <data key="requiredShape">1,1</data>
+    </edge>
+    <edge source="h3" target="s2">
+      <data key="requiredShape">1,1</data>
+    </edge>
+
+     <edge source="b1" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b1" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b1" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b2" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b2" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b2" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b3" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b3" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b3" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b4" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b4" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b4" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b5" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b5" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b5" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b6" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b6" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b6" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b7" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b7" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b7" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b8" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b8" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b8" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b9" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b9" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b9" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b10" target="2">
+      <data key="cost">0,1</data>
+    </edge>
+   <edge source="b10" target="4">
+      <data key="cost">0,1</data>
+    </edge>
+    <edge source="b10" target="6">
+      <data key="cost">0,1</data>
+    </edge>
+
+
+    <edge source="b1" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b1" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b1" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b2" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b2" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b2" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b3" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b3" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b3" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b4" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b4" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b4" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b5" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b5" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b5" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b6" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b6" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b6" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b7" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b7" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b7" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b8" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b8" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b8" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b9" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b9" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b9" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b10" target="2">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+   <edge source="b10" target="4">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+    <edge source="b10" target="6">
+      <data key="pickUpCost">0,1</data>
+    </edge>
+
+
+     <edge source="b1" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b1" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b1" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b2" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b2" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b2" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b3" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b3" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b3" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b4" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b4" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b4" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b5" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b5" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b5" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b6" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b6" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b6" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b7" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b7" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b7" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b8" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b8" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b8" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b9" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b9" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b9" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b10" target="c1">
+      <data key="color">0,1</data>
+    </edge>
+   <edge source="b10" target="c2">
+      <data key="color">0,1</data>
+    </edge>
+    <edge source="b10" target="c3">
+      <data key="color">0,1</data>
+    </edge>
+
+
+    <edge source="b1" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b1" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b2" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b2" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b3" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b3" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b4" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b4" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b5" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b5" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b6" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b6" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b7" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b7" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b8" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b8" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b9" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b9" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+    <edge source="b10" target="s1">
+      <data key="shape">0,1</data>
+    </edge>
+   <edge source="b10" target="s2">
+      <data key="shape">0,1</data>
+    </edge>
+
+    <edge source="h1" target="b1">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b2">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b3">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b4">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b5">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b6">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b7">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b8">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b9">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h1" target="b10">
+      <data key="atSlot">0,0</data>
+    </edge>
+
+    <edge source="h2" target="b1">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b2">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b3">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b4">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b5">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b6">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b7">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b8">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b9">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h2" target="b10">
+      <data key="atSlot">0,0</data>
+    </edge>
+
+    <edge source="h3" target="b1">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b2">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b3">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b4">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b5">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b6">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b7">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b8">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b9">
+      <data key="atSlot">0,0</data>
+    </edge>
+    <edge source="h3" target="b10">
+      <data key="atSlot">0,0</data>
+    </edge>
+
+
+  </graph>
+</graphml>

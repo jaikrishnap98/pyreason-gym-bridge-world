@@ -7,7 +7,7 @@ import random
 
 # Remember this will not overwrite previous files.
 # Either create new folder everytime or delete contents of folder before running
-write_path = "bridgeworld_data_pref_shape_color/bridgeworld_data_pref_horizontal_blue/"
+write_path = "bridgeworld_data_pref_shape_color/bridgeworld_data_pref_horizontal_red/"
 
 block_colors = ['red', 'green', 'blue']
 # type1 = 'square'
@@ -26,7 +26,7 @@ pref_type = 2 # particular block not allowed
 # pref_2 = 'blue'
 
 ## sample for pref_type = 2
-pref_1 = 'blue'
+pref_1 = 'red'
 pref_2 = 'horizontal'
 
 #change this as required

@@ -56,6 +56,9 @@ class PyReasonBridgeWorld:
                 elif self.shape_color == 'horizontal_blue':
                     # print('Horizontal blue graph')
                     graphml_file = f'{current_path}/graph/bridge_world_graph_pref_horizontal_blue.graphml'
+                elif self.shape_color == 'horizontal_red':
+                    # print('Horizontal blue graph')
+                    graphml_file = f'{current_path}/graph/bridge_world_graph_pref_horizontal_red.graphml'
 
         else:
             # print('No preferential graph')
