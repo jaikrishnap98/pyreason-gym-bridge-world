@@ -9,8 +9,16 @@ import csv
 import gym
 import pyreason_gym
 import matplotlib.pyplot as plt
+import shutil
 
 
+pref_type = 'color_color'
+color_color = 'green_blue'
+data_directory = f'bridgeworld_data_pref_{pref_type}'
+data_sub_directory = f'bridgeworld_data_pref_{color_color}'
+model_file = f'bridge_world_dql_pref_{color_color}.pt'
+final_model_file = f'bridge_world_dql_pref_{color_color}_final.pt'
+figure_file = f'bridge_world_dql_pref_{color_color}.png'
 class DQN(nn.Module):
     def __init__(self, in_states, h1_nodes, out_actions):
         super().__init__()
@@ -52,8 +60,8 @@ class LegalBridgeDQL():
 
     ACTIONS = ['red-vertical', 'red-horizontal','green-vertical', 'green-horizontal', 'blue-vertical', 'blue-horizontal']
 
-    def train(self, episodes, train_set, test_set, preferential_constraint = False):
-        env = gym.make('PyReasonBridgeWorld-v0', preferential_constraint=preferential_constraint)
+    def train(self, episodes, train_set, test_set):
+        env = gym.make('PyReasonBridgeWorld-v0', preferential_constraint=True, preferential_type=pref_type, color_color=color_color)
         num_states = 9
         num_actions = 6
 
@@ -61,6 +69,7 @@ class LegalBridgeDQL():
         memory = ReplayMemory(self.replay_memory_size)
 
         policy_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
+        policy_dqn.load_state_dict(torch.load("bridge_world_dql_no_pref.pt"))
         target_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
 
         target_dqn.load_state_dict(policy_dqn.state_dict())
@@ -75,17 +84,22 @@ class LegalBridgeDQL():
 
         epsilon_history = []
         step_count = 0
-
+        highest_accuracy = -100
         for i in range(episodes):
             # print(f'Episode:{train_set[i]}')
             mode_val = int(np.floor(len_train_set/10))
             if i%mode_val==0 and i != 0:
                 len_test_set = len(test_set)
-                done_count = bridge_world.test(len_test_set, test_set, preferential_constraint=preferential_constraint)
+                rws_per_episode, done_count = bridge_world.test(len_test_set, test_set)
                 accuracy = done_count / len_test_set
-                print(f'Accuracy: {accuracy*100:.2f}%')
+                print(f'Accuracy: {accuracy*100:.2f}% ----------- Average reward: {sum(rws_per_episode)/len(rws_per_episode)}')
+                if highest_accuracy < accuracy:
+                    highest_accuracy = accuracy
+                    shutil.copyfile(model_file, final_model_file)
+                print(highest_accuracy)
+
             state = env.reset()[0]
-            real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(csv_file=f'bridgeworld_data/{train_set[i]}.csv')
+            real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(csv_file=f'{data_directory}/{data_sub_directory}/{train_set[i]}.csv')
             # print(train_set[i])
             state_dict = env.initialize_facts(real_to_node_initial_facts)
             # print(state_dict)
@@ -211,10 +225,7 @@ class LegalBridgeDQL():
             env.close()
 
             # Save policy
-            if preferential_constraint:
-                torch.save(policy_dqn.state_dict(), "bridge_world_dql_pref.pt")
-            else:
-                torch.save(policy_dqn.state_dict(), "bridge_world_dql_no_pref.pt")
+            torch.save(policy_dqn.state_dict(), model_file)
 
             # Create new graph
             plt.figure(1)
@@ -231,37 +242,35 @@ class LegalBridgeDQL():
             plt.plot(epsilon_history)
 
             # Save plots
-            if preferential_constraint:
-                plt.savefig('bridge_dql_pref.png')
-            else:
-                plt.savefig('bridge_dql_no_pref.png')
+            plt.savefig(figure_file)
+        return rewards_per_episode
 
-
-    def test(self, episodes, test_set, preferential_constraint = False):
+    def test(self, episodes, test_set, model='bridge_world_dql_pref_green_blue.pt'):
         #
 
-        env = gym.make('PyReasonBridgeWorld-v0', preferential_constraint = preferential_constraint)
+        env = gym.make('PyReasonBridgeWorld-v0', preferential_constraint=True, preferential_type=pref_type, color_color=color_color)
         num_states = 9
         num_actions = 6
 
         # Load learned policy
         policy_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
-        if preferential_constraint:
-            policy_dqn.load_state_dict(torch.load("bridge_world_dql_pref.pt"))
-        else:
-            policy_dqn.load_state_dict(torch.load("bridge_world_dql_no_pref.pt"))
+
+        policy_dqn.load_state_dict(torch.load(model))
+
         policy_dqn.eval()    # switch model to evaluation mode
 
         # print('Policy (trained):')
         # self.print_dqn(policy_dqn)
         done_count = 0
         step_count = 0
+        rewards_per_episode = np.zeros(episodes)
         for i in range(episodes):
+            episode_reward = 0
             # print('===================================')
             # print(f'Episode {test_set[i]}')
             state = env.reset()[0]
             real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(
-                csv_file=f'bridgeworld_data/{test_set[i]}.csv')
+                csv_file=f'{data_directory}/{data_sub_directory}/{test_set[i]}.csv')
             # print(test_set[i])
             state_dict = env.initialize_facts(real_to_node_initial_facts)
             # print(state_dict)
@@ -286,7 +295,8 @@ class LegalBridgeDQL():
                     # print('Action: ', action_string)
                     action_block_number = self.get_action_block_number(action_number, block_availability_list)
                     if action_block_number == 'b0':
-
+                        reward = -5
+                        episode_reward += reward
                         step_count += 1
                         break
                     # print(action_block_number)
@@ -317,13 +327,16 @@ class LegalBridgeDQL():
                     # print(temp_block_availability_list)
 
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
+                episode_reward += reward
                 input_tensor = new_state
 
                 step_count += 1
 
-
+            rewards_per_episode[i] = episode_reward
         env.close()
-        return done_count
+        return rewards_per_episode, done_count
+
+
     def optimize(self, mini_batch, policy_dqn, target_dqn):
 
         # Get number of input nodes
@@ -412,17 +425,7 @@ class LegalBridgeDQL():
     def get_input_tensor_from_state_dict(self, state_dict):
         blocks_available = state_dict.get('blocks_available', {})
         slots_available = state_dict.get('slots_available', {})
-        # h1_entry = 0
-        # h2_entry = 0
-        # h3_entry = 0
-        # if slots_available['h1'] != 0:
-        #     h1_entry = 1
-        # if slots_available['h2'] != 0:
-        #     h2_entry = 1
-        # if slots_available['h3'] != 0:
-        #     h3_entry = 1
 
-        # Old approacch
         # Extracting values in a specific order
         tensor_values = [
             slots_available.get('h1', 0)-1,
@@ -436,19 +439,7 @@ class LegalBridgeDQL():
             blocks_available.get('blue-horizontal', 0)
 
         ]
-        #New approach
-        # tensor_values = [
-        #     h1_entry,
-        #     h2_entry,
-        #     h3_entry,
-        #     blocks_available.get('red-vertical', 0),
-        #     blocks_available.get('red-horizontal', 0),
-        #     blocks_available.get('green-vertical', 0),
-        #     blocks_available.get('green-horizontal', 0),
-        #     blocks_available.get('blue-vertical', 0),
-        #     blocks_available.get('blue-horizontal', 0)
-        #
-        # ]
+
         tensor_values = torch.Tensor(tensor_values)
         return tensor_values
     def combine_values(self, dict1):
@@ -473,92 +464,26 @@ class LegalBridgeDQL():
         return real_to_node_initial_facts, initial_facts
 
 
-    def split_train_test(self, total_samples = 612):
-
-
-        # Define the total number of samples
-        # total_samples = 2000
-
-        # Define the percentage split
-        train_percentage = 0.8
-        test_percentage = 0.2
-
-        # Calculate the number of samples for each split
-        num_train_samples = int(total_samples * train_percentage)
-        num_test_samples = total_samples - num_train_samples
-
-        # Generate a list of numbers from 1 to 1000
-        numbers = list(range(1, total_samples + 1))
-
-        # Randomly select numbers for the train set
-        random.seed(1)
-        train_set = random.sample(numbers, num_train_samples)
-
-        # Remove selected numbers from the list to ensure no overlap
-        for num in train_set:
-            numbers.remove(num)
-
-        # The remaining numbers constitute the test set
-        test_set = numbers
-
-        return train_set, test_set
-
-
-    '''
-        Converts an state (int) to a tensor representation.
-        For example, the FrozenLake 4x4 map has 4x4=16 states numbered from 0 to 15. 
-
-        Parameters: state=1, num_states=16
-        Return: tensor([0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
-        '''
-
-    # def state_to_dqn_input(self, state: int, num_states: int) -> torch.Tensor:
-    #     input_tensor = torch.zeros(num_states)
-    #     input_tensor[state] = 1
-    #     return input_tensor
-
-
-
-    # Print DQN: state, best action, q values
-    # def print_dqn(self, dqn):
-    #     # Get number of input nodes
-    #     num_states = dqn.fc1.in_features
-    #
-    #     # Loop each state and print policy to console
-    #     for s in range(num_states):
-    #         #  Format q values for printing
-    #         q_values = ''
-    #         for q in dqn(self.state_to_dqn_input(s, num_states)).tolist():
-    #             q_values += "{:+.2f}".format(q) + ' '  # Concatenate q values, format to 2 decimals
-    #         q_values = q_values.rstrip()  # Remove space at the end
-    #
-    #         # Map the best action to L D R U
-    #         best_action = self.ACTIONS[dqn(self.state_to_dqn_input(s, num_states)).argmax()]
-    #
-    #         # Print policy in the format of: state, action, q values
-    #         # The printed layout matches the FrozenLake map.
-    #         print(f'{s:02},{best_action},[{q_values}]', end=' ')
-    #         if (s + 1) % 4 == 0:
-    #             print()  # Print a newline every 4 states
-
 
 if __name__ == '__main__':
     bridge_world= LegalBridgeDQL()
-    train_set, test_set = bridge_world.split_train_test(total_samples=612)
+    train_set = []
+    test_set = [2, 12, 14, 18, 22, 35, 49, 55, 61, 62, 66, 68, 71, 73, 74, 80, 85, 90, 94, 96, 98, 99, 104, 107, 114, 119, 120, 122, 125, 126, 134, 135, 136, 141, 146, 155, 156, 158,
+ 164, 166, 169, 172, 179, 181, 184, 188, 192, 197, 199, 218, 221, 226, 230, 242, 246, 257, 267, 268, 270, 272, 275, 287, 296, 305, 307, 310, 313, 317, 318, 330, 335, 342,
+ 347, 351, 355, 363, 371, 372, 375, 379, 383, 392, 395, 396, 397, 399, 406, 411, 416, 421, 442, 456, 460, 463, 464, 468, 469, 475, 476, 478, 479, 491, 495, 497, 504, 506,
+ 516, 531, 535, 542, 547, 557, 558, 564, 574, 579, 580, 586, 589, 591, 593, 605, 611]
+    for i in range(1, 613):
+        if i not in test_set:
+            train_set.append(i)
+
     len_train_set = len(train_set)
     len_test_set = len(test_set)
-    index_new = int(len_train_set/2)
-    train_set_1 = train_set[:index_new]
-    train_set_2 = train_set[index_new:]
-    len_train_set_1 = len(train_set_1)
-    len_train_set_2 = len(train_set_2)
+    print(len_train_set, len_test_set)
 
 
-    bridge_world.train(len_train_set_1, train_set_1, test_set, preferential_constraint = False)
-    done_count = bridge_world.test(len_test_set, test_set, preferential_constraint=False)
+
+    bridge_world.train(len_train_set, train_set, test_set)
+    rws_per_episode, done_count = bridge_world.test(len_test_set, test_set, model=final_model_file)
     accuracy = done_count / len_test_set
-    print(accuracy)
-    bridge_world.train(len_train_set_1, train_set_1, test_set, preferential_constraint = True)
-    done_count = bridge_world.test(len_test_set, test_set, preferential_constraint=True)
-    accuracy = done_count / len_test_set
-    print(accuracy)
+    print(f'Accuracy: {accuracy * 100:.2f}% ----------- Average reward: {sum(rws_per_episode) / len(rws_per_episode)}')
+

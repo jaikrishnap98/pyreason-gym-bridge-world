@@ -1,13 +1,22 @@
-
-
 import os
 import pyreason as pr
 import numpy as np
 
 
 class PyReasonBridgeWorld:
-    def __init__(self, graph, rules):
+    def __init__(self, graph, rules, preferential_constraint, preferential_type, shape_color, color_color):
+
+        dict_color_color = {'red_red':[('c1','c1')], 'red_green':[('c1','c2'), ('c2','c1')], 'red_blue':[('c1','c3'), ('c3','c1')],
+                            'green_green':[('c2','c2')], 'green_red':[('c1','c2'), ('c2','c1')], 'green_blue':[('c2','c3'), ('c3','c2')],
+                            'blue_blue':[('c3','c3')], 'blue_red':[('c1','c3'), ('c3','c1')], 'blue_green':[('c2','c3'), ('c3','c2')]}
+        dict_shape_color = {'vertical_red':('s1', 'c1'), 'vertical_green':('s1', 'c2'), 'vertical_blue': ('s1', 'c3'),
+                            'horizontal_red':('s2', 'c1'), 'horizontal_green':('s2', 'c2'), 'horizontal_blue': ('s2', 'c3'),}
+
         self.interpretation = None
+        self.preferential_constraint = preferential_constraint
+        self.preferential_type = preferential_type
+        self.shape_color = shape_color
+        self.color_color = color_color
 
         # Keep track of the next timestep to start
         self.next_time = 0
@@ -28,24 +37,63 @@ class PyReasonBridgeWorld:
         pr.settings.store_interpretation_changes = True
         current_path = os.path.abspath(os.path.dirname(__file__))
 
+        if self.preferential_constraint:
+            if self.preferential_type == 'color_color':
+                if self.color_color == 'green_blue':
+                    # print('Green blue graph')
+                    graphml_file = f'{current_path}/graph/bridge_world_graph_pref_green_blue.graphml'
+                elif self.color_color == 'red_blue':
+                    # print('Red blue graph')
+                    graphml_file = f'{current_path}/graph/bridge_world_graph_pref_red_blue.graphml'
+                elif self.color_color == 'red_green':
+                    # print('Red green graph')
+                    graphml_file = f'{current_path}/graph/bridge_world_graph_pref_red_green.graphml'
+
+            elif self.preferential_type == 'shape_color':
+                if self.shape_color == 'vertical_red':
+                    # print('Vertical red graph')
+                    graphml_file = f'{current_path}/graph/bridge_world_graph_pref_vertical_red.graphml'
+                elif self.shape_color == 'horizontal_blue':
+                    # print('Horizontal blue graph')
+                    graphml_file = f'{current_path}/graph/bridge_world_graph_pref_horizontal_blue.graphml'
+
+        else:
+            # print('No preferential graph')
+            graphml_file = f'{current_path}/graph/bridge_world_graph.graphml'
 
         # Load the graph
         if graph is None:
-            pr.load_graphml(f'{current_path}/graph/bridge_world_graph.graphml')
+            pr.load_graphml(graphml_file)
         else:
             pr.load_graph(graph)
 
         # Load rules
         if rules is None:
-            pr.add_rules_from_file(f'{current_path}/yamls/rules_bridge_new.txt', infer_edges=True)
+            if self.preferential_constraint:
+                if self.preferential_type == 'color_color':
+                    # for index, e in enumerate(dict_color_color[color_color]):
+                    #     print(f'Fact added for {e}')
+                    #     pr.add_fact(pr.Fact(f'preferential_color_color_fact_{index}', e,'legalAdjacent',[0,0], 0, 0, static=True))
+                    # print('color color rules')
+                    pr.add_rules_from_file(f'{current_path}/yamls/rules_bridge_pref_color_color.txt', infer_edges=True)
+
+                elif self.preferential_type == 'shape_color':
+                    # print('shape color rules')
+                    pr.add_rules_from_file(f'{current_path}/yamls/rules_bridge_pref_shape_color.txt', infer_edges=True)
+
+            else:
+                # print('baSIC rules')
+                pr.add_rules_from_file(f'{current_path}/yamls/rules_bridge_basic.txt', infer_edges=True)
         else:
             pass
+
 
     def reset(self):
         # Reason for 1 timestep to initialize everything
         # Certain internal variables need to be reset otherwise memory blows up
 
         pr.reset()
+        # pr.reset_rules()
         self.interpretation = pr.reason(0, again=False)
         # pr.save_rule_trace(self.interpretation)
         self.next_time = self.interpretation.time + 1

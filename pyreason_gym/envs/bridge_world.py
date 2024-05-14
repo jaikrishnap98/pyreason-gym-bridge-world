@@ -4,18 +4,24 @@ from gym import spaces
 
 from pyreason_gym.pyreason_bridge_world.pyreason_bridge_world import PyReasonBridgeWorld
 from pyreason_gym.simulator_other.other_simulator import OtherSimulator
-
+# preferential_constraint = False, graph=None, rules=None
 
 class BridgeWorldEnv(gym.Env):
 
-    def __init__(self, pyreason_simulator=True, graph=None, rules=None):
+    def __init__(self, pyreason_simulator=True, **kwargs):
 
         super(BridgeWorldEnv, self).__init__()
-
+        preferential_constraint = kwargs.get('preferential_constraint')
+        preferential_type = kwargs.get('preferential_type')
+        shape_color =kwargs.get('shape_color')
+        color_color =kwargs.get('color_color')
+        graph = kwargs.get('graph')
+        rules = kwargs.get('rules')
         self.pyreason_simulator = pyreason_simulator
+        self.preferential_constraint = preferential_constraint
 
         # Initialize the PyReason gridworld
-        self.pyreason_bridge_world = PyReasonBridgeWorld(graph, rules)
+        self.pyreason_bridge_world = PyReasonBridgeWorld(graph, rules, preferential_constraint, preferential_type, shape_color, color_color)
         self.other_simulator = OtherSimulator()
 
         self.observation_space = spaces.Dict(
@@ -161,7 +167,7 @@ class BridgeWorldEnv(gym.Env):
         info = self._get_info(observation)
         return observation, info
 
-    def step(self, action):
+    def step(self, action, preferential_constraint = False):
 
         if self.pyreason_simulator:
             self.pyreason_bridge_world.move(action)
@@ -177,7 +183,7 @@ class BridgeWorldEnv(gym.Env):
         # End of game
         done = self.is_done(observation)
 
-        if self.count > 15 and not done:
+        if self.count > 6 and not done:
             rew = -10
             truncate = True
         else:

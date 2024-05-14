@@ -177,13 +177,13 @@
       <data key="legalAdjacent">1,1</data>
     </edge>
     <edge source="c2" target="c3">
-      <data key="legalAdjacent">1,1</data>
+      <data key="legalAdjacent">0,0</data>
     </edge>
     <edge source="c3" target="c1">
       <data key="legalAdjacent">1,1</data>
     </edge>
     <edge source="c3" target="c2">
-      <data key="legalAdjacent">1,1</data>
+      <data key="legalAdjacent">0,0</data>
     </edge>
     <edge source="c3" target="c3">
       <data key="legalAdjacent">1,1</data>

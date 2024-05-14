@@ -1,0 +1,28 @@
+
+# No adjacents occupied - first slot
+atSlot(slot,block) <-1 atLoc(slot, block), picked(block),  assigned(block):[0,0], assigned(slot):[0,0], color(block, blockColor), shape(block, blockShape), requiredShape(slot, blockShape), adjacent(slot, adjacentHouse1), noTouchRight(slot, rightHouse2), assigned(adjacentHouse1):[0,0], assigned(rightHouse2):[0,0]
+# no adjacent occupied - second slot
+atSlot(slot,block) <-1 atLoc(slot, block), picked(block),  assigned(block):[0,0], assigned(slot):[0,0], color(block, blockColor), shape(block, blockShape), requiredShape(slot, blockShape), adjacent(slot, adjacentHouse1), noTouchLeft(slot, leftHouse2), assigned(adjacentHouse1):[0,0], assigned(leftHouse2):[1,1]
+
+# both occupied - slot 3
+atSlot(slot,block) <-1 atLoc(slot, block), picked(block),  assigned(block):[0,0], assigned(slot):[0,0], color(block, blockColor), shape(block, blockShape), requiredShape(slot, blockShape), adjacent(slot, adjacentHouse1), adjacent(slot, adjacentHouse2), noTouchRight(adjacentHouse1, adjacentHouse2), assigned(adjacentHouse1):[1,1],  assigned(adjacentHouse2):[1,1]
+
+
+# Set Assigned flag
+assigned(slot):[1,1] <-0 atSlot(slot, block), assigned(slot):[0,0]
+
+# Set Assigned flag
+assigned(block):[1,1] <-0 atSlot(slot, block), assigned(block):[0,0]
+
+# Assign color
+assignColor(slot, blockColor) <-0 atSlot(slot, block), color(block, blockColor)
+
+# Assign shape
+assignShape(slot, blockShape) <-0 atSlot(slot, block), shape(block, blockShape)
+
+
+# Pickup operation rules
+
+pickUpCost(block, cost) <-0 atSlot(slot,block), cost(block, cost)
+
+#atSlot(slot,block) <-1 atLoc(slot, block), picked(block),  assigned(block):[0,0], assigned(slot):[0,0], color(block, blockColor), shape(block, blockShape), requiredShape(slot, blockShape), adjacent(slot, adjacentHouse1), adjacent(slot, adjacentHouse2), assigned(adjacentHouse1):[0,0], assigned(adjacentHouse2):[1,1], assignColor(adjacentHouse2, adjacentHouse2Color), legalAdjacent(adjacentHouse2Color, blockColor)

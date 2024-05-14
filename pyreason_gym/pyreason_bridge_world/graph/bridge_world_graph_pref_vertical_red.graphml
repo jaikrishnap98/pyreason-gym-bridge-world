@@ -190,7 +190,7 @@
     </edge>
 
     <edge source="s1" target="c1">
-      <data key="allowedType">1,1</data>
+      <data key="allowedType">0,0</data>
     </edge>
     <edge source="s1" target="c2">
       <data key="allowedType">1,1</data>

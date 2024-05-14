@@ -2,20 +2,31 @@ import pyreason_gym
 import gym
 SIMULATOR_PYREASON = True
 # DEFAULT = True
-
-
-env = gym.make('PyReasonBridgeWorld-v0',pyreason_simulator=SIMULATOR_PYREASON)
+preferential_constraint = True
+# preferential_type = 'color_color'
+preferential_type = 'shape_color'
+shape_color = 'vertical_red'
+# color_color = 'green_blue'
+env = gym.make('PyReasonBridgeWorld-v0', pyreason_simulator=SIMULATOR_PYREASON, preferential_constraint=preferential_constraint, preferential_type=preferential_type,shape_color=shape_color)
 
 default = input('Do you want to use default blocks and properties?(y/n): ')
+# if default=='y':
+#     initial_facts = {
+#         'b1': ['red', 'vertical', '2'],
+#         'b2': ['red', 'vertical', '2'],
+#         'b3': ['blue', 'vertical', '6'],
+#         'b4': ['green', 'horizontal', '4'],
+#         'b5': ['red', 'vertical', '2'],
+#         'b6': ['red', 'horizontal', '6'],
+#         'b7': ['green', 'vertical', '6']
+#     }
 if default=='y':
     initial_facts = {
         'b1': ['red', 'vertical', '2'],
-        'b2': ['red', 'vertical', '2'],
-        'b3': ['blue', 'horizontal', '6'],
-        'b4': ['green', 'horizontal', '4'],
-        'b5': ['red', 'vertical', '2'],
-        'b6': ['red', 'horizontal', '6'],
-        'b7': ['green', 'vertical', '6']
+        'b2': ['green', 'horizontal', '2'],
+        'b3': ['red', 'horizontal', '6'],
+        'b4': ['green', 'vertical', '4'],
+        'b5': ['green', 'vertical', '2']
     }
 else:
     initial_facts = {
@@ -81,12 +92,19 @@ for block, list_properties in initial_facts.items():
 # Policy test: Picked blocks
 # policy_actions_pick = ['red-square', 'red-square', 'red-square', 'blue-rectangle', 'green-rectangle', 'red-curve', 'green-curve', 'green-square', 'red-curve']
 # policy_actions_pick = ['red-vertical', 'red-vertical', 'green-horizontal']
-policy_actions_pick = ['green-vertical', 'red-vertical', 'blue-horizontal', 'blue-vertical', 'red-horizontal']
+# policy_actions_pick = ['green-vertical', 'red-vertical', 'green-horizontal']
+policy_actions_pick = ['red-vertical', 'green-vertical', 'red-horizontal']
 # Policy test: slots assigned, h1-h7 are slots for house and h0 is a trash!
 # policy_actions_slots = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h0', 'h7', 'h7']
-policy_actions_slots = ['h1', 'h2', 'h3', 'h3', 'h3']
-
-
+policy_actions_slots = ['h1', 'h2', 'h3', 'h1', 'h1']
+#
+# initial_facts = {
+#         'b1': ['red', 'vertical', '2'],
+#         'b2': ['green', 'horizontal', '2'],
+#         'b3': ['red', 'horizontal', '6'],
+#         'b4': ['green', 'vertical', '4'],
+#         'b5': ['green', 'vertical', '2']
+#     }
 
 # Now let us assign block numbers to the given type of blocks
 policy_actions_picked_block = []
