@@ -211,7 +211,7 @@ class LegalBridgeDQL():
             env.close()
 
             # Save policy
-            torch.save(policy_dqn.state_dict(), "bridge_world_dql_no_pref.pt")
+            torch.save(policy_dqn.state_dict(), "intermediate_models/bridge_world_dql_no_pref.pt")
 
             # Create new graph
             plt.figure(1)
@@ -241,7 +241,7 @@ class LegalBridgeDQL():
         # Load learned policy
         policy_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
 
-        policy_dqn.load_state_dict(torch.load("bridge_world_dql_no_pref.pt"))
+        policy_dqn.load_state_dict(torch.load("intermediate_models/bridge_world_dql_no_pref.pt"))
 
         policy_dqn.eval()    # switch model to evaluation mode
 
@@ -330,7 +330,7 @@ class LegalBridgeDQL():
         policy_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
         target_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
 
-        policy_dqn.load_state_dict(torch.load("bridge_world_dql_no_pref.pt"))
+        policy_dqn.load_state_dict(torch.load("intermediate_models/bridge_world_dql_no_pref.pt"))
         target_dqn.load_state_dict(policy_dqn.state_dict())
 
         # print('Policy (random, before training):')

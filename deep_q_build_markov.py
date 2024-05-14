@@ -214,7 +214,7 @@ class LegalBridgeDQL():
             if preferential_constraint:
                 torch.save(policy_dqn.state_dict(), "bridge_world_dql_pref.pt")
             else:
-                torch.save(policy_dqn.state_dict(), "bridge_world_dql_no_pref.pt")
+                torch.save(policy_dqn.state_dict(), "intermediate_models/bridge_world_dql_no_pref.pt")
 
             # Create new graph
             plt.figure(1)
@@ -249,7 +249,7 @@ class LegalBridgeDQL():
         if preferential_constraint:
             policy_dqn.load_state_dict(torch.load("bridge_world_dql_pref.pt"))
         else:
-            policy_dqn.load_state_dict(torch.load("bridge_world_dql_no_pref.pt"))
+            policy_dqn.load_state_dict(torch.load("intermediate_models/bridge_world_dql_no_pref.pt"))
         policy_dqn.eval()    # switch model to evaluation mode
 
         # print('Policy (trained):')

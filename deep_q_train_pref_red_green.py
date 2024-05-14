@@ -69,7 +69,7 @@ class LegalBridgeDQL():
         memory = ReplayMemory(self.replay_memory_size)
 
         policy_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
-        policy_dqn.load_state_dict(torch.load("bridge_world_dql_no_pref.pt"))
+        policy_dqn.load_state_dict(torch.load("intermediate_models/bridge_world_dql_no_pref.pt"))
         target_dqn = DQN(in_states=num_states, h1_nodes=64, out_actions=num_actions)
 
         target_dqn.load_state_dict(policy_dqn.state_dict())

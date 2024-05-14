@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import shutil
 
 data_directory = 'bridgeworld_data_no_pref'
-model_file =  'bridge_world_dql_no_pref.pt'
+model_file = 'intermediate_models/bridge_world_dql_no_pref.pt'
 final_model_file = 'bridge_world_dql_no_pref_final.pt'
 class DQN(nn.Module):
     def __init__(self, in_states, h1_nodes, out_actions):
@@ -218,7 +218,7 @@ class LegalBridgeDQL():
             env.close()
 
             # Save policy
-            torch.save(policy_dqn.state_dict(), "bridge_world_dql_no_pref.pt")
+            torch.save(policy_dqn.state_dict(), "intermediate_models/bridge_world_dql_no_pref.pt")
 
             # Create new graph
             plt.figure(1)
