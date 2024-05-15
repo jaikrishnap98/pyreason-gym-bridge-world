@@ -68,6 +68,7 @@ class LegalBridgeDQL():
             real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(
                 csv_file=f'{data_directory}/{test_set[i]}.csv')
             # print(test_set[i])
+            # print(real_to_node_initial_facts)
             state_dict = env.initialize_facts(real_to_node_initial_facts)
             # print(state_dict)
             input_tensor = self.get_input_tensor_from_state_dict(state_dict)
@@ -90,20 +91,24 @@ class LegalBridgeDQL():
                     action_string = self.get_action_string(action_number)
                     # print('Action: ', action_string)
                     action_block_number = self.get_action_block_number(action_number, block_availability_list)
+                    # print(action_block_number)
+
                     if action_block_number == 'b0':
+                        # print('Picked b0')
                         reward = -5
                         episode_reward += reward
                         step_count += 1
                         break
                     # print(action_block_number)
                     # print('=======================================================================================')
-
+                # print(policy_actions_slots[0], action_block_number)
                 # print(policy_actions_slots[0], action_block_number)
                 new_state_dict, reward, terminated, truncated, info_dict = env.step(
                     (policy_actions_slots[0], action_block_number))
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
                 # print(policy_actions_slots[0], action_block_number, action_string)
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
+                episode_reward += reward
                 if terminated:
                     done_count += 1
                     break
@@ -123,7 +128,7 @@ class LegalBridgeDQL():
                     # print(temp_block_availability_list)
 
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
-                episode_reward += reward
+
                 input_tensor = new_state
 
                 step_count += 1
@@ -254,12 +259,16 @@ if __name__ == '__main__':
  834, 847, 849, 852, 853, 854, 860, 863, 865, 869, 870, 877, 885, 887, 888, 891, 894, 905, 908, 913, 914, 916, 917, 923, 947, 948, 949, 955, 965, 970, 971]
     len_test_set = len(test_set)
     # print(len_test_set)
-    sample_test_set = random.sample(test_set, 20)
+    sample_test_set = random.sample(test_set, 10)
+    # sample_test_set = [5]
     len_sample_test_set = len(sample_test_set)
-    print(sample_test_set)
+    # print(sample_test_set)
     rws_per_episode, done_count = bridge_world.test(len_sample_test_set, sample_test_set, model_file=final_model_file)
     accuracy = done_count / len_sample_test_set
-    print(done_count)
-    print(rws_per_episode)
+    # print(done_count)
+    # print(rws_per_episode)
     print(f'Accuracy: {accuracy * 100:.2f}% ----------- Average reward: {sum(rws_per_episode) / len(rws_per_episode)}')
+    #
+    # for rw, t in zip(rws_per_episode, test_set):
+    #     print(rw, t)
 

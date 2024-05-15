@@ -110,6 +110,7 @@ class LegalBridgeDQL():
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
                 # print(policy_actions_slots[0], action_block_number, action_string)
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
+                episode_reward += reward
                 if terminated:
                     done_count += 1
                     break

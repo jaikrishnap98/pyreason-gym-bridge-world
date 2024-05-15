@@ -120,7 +120,8 @@ class BridgeWorldEnv(gym.Env):
         if number_of_left_blocks < number_of_left_slots:
             flag_impossible = True
             final_reward += impossible
-
+        # print(observation)
+        # print(len(observation['slots']))
         if len(observation['slots']) == 3:
             flag_complete = True
             final_reward += done
@@ -137,6 +138,7 @@ class BridgeWorldEnv(gym.Env):
         if flag_legal and flag_incomplete:
             return legal_slot
         if flag_legal and flag_complete:
+            # print(legal_slot+done)
             return legal_slot + done
 
         # return final_reward

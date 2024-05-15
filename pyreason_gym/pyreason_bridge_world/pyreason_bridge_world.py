@@ -33,7 +33,7 @@ class PyReasonBridgeWorld:
         pr.settings.canonical = True
         pr.settings.inconsistency_check = False
         pr.settings.static_graph_facts = False
-        pr.settings.save_graph_attributes_to_trace = False
+        pr.settings.save_graph_attributes_to_trace = True
         pr.settings.store_interpretation_changes = True
         current_path = os.path.abspath(os.path.dirname(__file__))
 

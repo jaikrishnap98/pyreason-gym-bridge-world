@@ -74,6 +74,7 @@ class LegalBridgeDQL():
             real_to_node_initial_facts, real_initial_facts = self.get_initial_blocks_dict(
                 csv_file=f'{data_directory}/{data_sub_directory}/{test_set[i]}.csv')
             # print(test_set[i])
+            # print(real_initial_facts)
             state_dict = env.initialize_facts(real_to_node_initial_facts)
             # print(state_dict)
             input_tensor = self.get_input_tensor_from_state_dict(state_dict)
@@ -110,6 +111,7 @@ class LegalBridgeDQL():
                 new_state = self.get_input_tensor_from_state_dict(new_state_dict)
                 # print(policy_actions_slots[0], action_block_number, action_string)
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
+                episode_reward += reward
                 if terminated:
                     done_count += 1
                     break
@@ -129,7 +131,7 @@ class LegalBridgeDQL():
                     # print(temp_block_availability_list)
 
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
-                episode_reward += reward
+
                 input_tensor = new_state
 
                 step_count += 1
@@ -238,12 +240,16 @@ if __name__ == '__main__':
     len_test_set = len(test_set)
     # print(len_test_set)
     sample_test_set = random.sample(test_set, 20)
+    # sample_test_set = test_set
+    # sample_test_set = [591]
     len_sample_test_set = len(sample_test_set)
-    print(sample_test_set)
+    # print(sample_test_set)
     rws_per_episode, done_count = bridge_world.test(len_sample_test_set, sample_test_set, model=final_model_file)
     accuracy = done_count / len_sample_test_set
-    print(done_count)
-    print(rws_per_episode)
+    # print(done_count)
+    # print(rws_per_episode)
     print(f'Accuracy: {accuracy * 100:.2f}% ----------- Average reward: {sum(rws_per_episode) / len(rws_per_episode)}')
 
+    # for rw, t in zip(rws_per_episode, test_set):
+    #     print(rw, t)
 
