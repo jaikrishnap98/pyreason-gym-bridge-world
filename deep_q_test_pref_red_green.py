@@ -130,7 +130,7 @@ class LegalBridgeDQL():
                     # print(temp_block_availability_list)
 
                 # print((input_tensor, action_number, new_state_dict, new_state, reward, terminated, info_dict))
-                episode_reward += reward
+                # episode_reward += reward
                 input_tensor = new_state
 
                 step_count += 1
